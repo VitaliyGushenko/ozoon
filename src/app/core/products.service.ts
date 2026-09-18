@@ -13,7 +13,7 @@ import {
 } from '@angular/fire/firestore';
 import { Observable } from 'rxjs';
 import { AuthService } from './auth.service';
-import { Product } from './models';
+import { Product, ProductDraft } from './models';
 
 @Injectable({ providedIn: 'root' })
 export class ProductsService {
@@ -28,24 +28,23 @@ export class ProductsService {
     { idField: 'id' }
   ) as Observable<Product[]>;
 
-  addProduct(
-    product: Pick<Product, 'title' | 'description' | 'imageUrl' | 'category' | 'specs'>
-  ) {
+  addProduct(product: ProductDraft) {
     const user = this.authService.user();
     if (!user) throw new Error('Только авторизованный продавец может добавить товар');
     const col = collection(this.firestore, 'products');
     return addDoc(col, {
       ...product,
+      imageUrl: product.images?.[0] ?? product.imageUrl ?? '',
       sellerUid: user.uid,
       createdAt: serverTimestamp(),
     });
   }
 
-  updateProduct(
-    id: string,
-    changes: Pick<Product, 'title' | 'description' | 'imageUrl' | 'category' | 'specs'>
-  ) {
-    return updateDoc(doc(this.firestore, 'products', id), changes);
+  updateProduct(id: string, changes: ProductDraft) {
+    return updateDoc(doc(this.firestore, 'products', id), {
+      ...changes,
+      imageUrl: changes.images?.[0] ?? changes.imageUrl ?? '',
+    });
   }
 
   deleteProduct(id: string) {

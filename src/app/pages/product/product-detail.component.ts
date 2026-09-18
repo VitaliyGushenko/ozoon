@@ -50,13 +50,75 @@ export class ProductDetailComponent {
     return CATEGORIES.find((c) => c.value === product.category)?.label ?? '';
   });
 
+  // --- Карусель изображений ---
+
+  readonly images = computed<string[]>(() => {
+    const product = this.product();
+    if (!product) return [];
+    const list = product.images?.length
+      ? product.images
+      : [product.imageUrl].filter(Boolean);
+    return list;
+  });
+
+  readonly currentImage = signal(0);
+
+  nextImage(): void {
+    const count = this.images().length;
+    if (count) this.currentImage.set((this.currentImage() + 1) % count);
+  }
+
+  prevImage(): void {
+    const count = this.images().length;
+    if (count)
+      this.currentImage.set((this.currentImage() - 1 + count) % count);
+  }
+
+  goToImage(index: number): void {
+    this.currentImage.set(index);
+  }
+
+  // --- Характеристики, выбираемые покупателем ---
+
+  readonly variantEntries = computed<{ key: string; def: SpecDef; values: string[] }[]>(
+    () => {
+      const product = this.product();
+      if (!product?.variants || !product.category) return [];
+      const templates = SPEC_TEMPLATES[product.category];
+      return Object.entries(product.variants)
+        .filter(([, values]) => values.length > 0)
+        .map(([key, values]) => ({
+          key,
+          def: templates.find((t) => t.key === key) ?? {
+            key,
+            label: key,
+            type: 'text' as const,
+          },
+          values,
+        }));
+    }
+  );
+
+  readonly selectedVariants = signal<Record<string, string>>({});
+
+  /** Значение выбранного варианта (по умолчанию — первый доступный). */
+  selectedValue(key: string, values: string[]): string {
+    const selected = this.selectedVariants();
+    return selected[key] ?? values[0];
+  }
+
+  onVariantChange(key: string, value: string): void {
+    this.selectedVariants.update((selected) => ({ ...selected, [key]: value }));
+  }
+
+  /** Фиксированные характеристики (варианты показываются как селекторы выше). */
   readonly specRows = computed<{ def: SpecDef; value: string }[]>(() => {
     const product = this.product();
     if (!product || !product.category || !product.specs) return [];
-    return SPEC_TEMPLATES[product.category].map((def) => ({
-      def,
-      value: product.specs[def.key] ?? '—',
-    }));
+    const variantKeys = new Set(Object.keys(product.variants ?? {}));
+    return SPEC_TEMPLATES[product.category]
+      .filter((def) => !variantKeys.has(def.key))
+      .map((def) => ({ def, value: product.specs[def.key] ?? '—' }));
   });
 
   async delete(): Promise<void> {

@@ -8,7 +8,36 @@
 
     <div class="layout">
       <div class="image-side">
-        <img [src]="product()!.imageUrl" [alt]="product()!.title" />
+        <div class="carousel">
+          <img [src]="images()[currentImage()]" [alt]="product()!.title" />
+
+          @if (images().length > 1) {
+            <button
+              type="button"
+              class="arrow prev"
+              (click)="prevImage()"
+              aria-label="Предыдущее изображение"
+            >‹</button>
+            <button
+              type="button"
+              class="arrow next"
+              (click)="nextImage()"
+              aria-label="Следующее изображение"
+            >›</button>
+
+            <div class="dots">
+              @for (img of images(); track $index) {
+                <button
+                  type="button"
+                  class="dot"
+                  [class.active]="$index === currentImage()"
+                  (click)="goToImage($index)"
+                  [attr.aria-label]="'Изображение ' + ($index + 1)"
+                ></button>
+              }
+            </div>
+          }
+        </div>
       </div>
 
       <div class="info-side">
@@ -23,6 +52,25 @@
               [routerLink]="['/product', product()!.id, 'edit']"
             >Редактировать</a>
             <button type="button" class="delete-btn" (click)="delete()">Удалить</button>
+          </div>
+        }
+
+        @if (variantEntries().length) {
+          <h2>Конфигурация</h2>
+          <div class="variants">
+            @for (v of variantEntries(); track v.key) {
+              <label>
+                {{ v.def.label }}
+                <select
+                  [value]="selectedValue(v.key, v.values)"
+                  (change)="onVariantChange(v.key, $any($event.target).value)"
+                >
+                  @for (value of v.values; track value) {
+                    <option [value]="value">{{ value }}</option>
+                  }
+                </select>
+              </label>
+            }
           </div>
         }
 

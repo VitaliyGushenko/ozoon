@@ -25,11 +25,14 @@ export class AddProductComponent {
 
   readonly category = signal<string>('');
   readonly specs = signal<Record<string, string>>({});
+  /** Характеристики, выбираемые покупателем: ключ -> доступные значения. */
+  readonly variants = signal<Record<string, string[]>>({});
+  readonly images = signal<string[]>([]);
   readonly editMode = signal(false);
 
+  newImageUrl = '';
   title = '';
   description = '';
-  imageUrl = '';
   error = '';
   busy = false;
 
@@ -40,14 +43,20 @@ export class AddProductComponent {
     return category ? SPEC_TEMPLATES[category as 'phone' | 'laptop'] : [];
   });
 
+  /** Все обязательные поля заполнены: фиксированные характеристики + варианты. */
   readonly specsComplete = computed(() => {
     const specs = this.currentSpecs();
     const values = this.specs();
+    const variants = this.variants();
+    const fixed = specs.filter((s) => !variants[s.key]);
     return (
-      specs.length > 0 &&
-      specs.every((s) => String(values[s.key] ?? '').trim().length > 0)
+      fixed.length > 0 &&
+      fixed.every((s) => String(values[s.key] ?? '').trim().length > 0) &&
+      Object.values(variants).every((vals) => vals.length > 0)
     );
   });
+
+  readonly imagesComplete = computed(() => this.images().length > 0);
 
   constructor() {
     const id = this.route.snapshot.paramMap.get('id');
@@ -76,12 +85,14 @@ export class AddProductComponent {
     this.category.set(product.category);
     this.title = product.title;
     this.description = product.description;
-    this.imageUrl = product.imageUrl;
+    this.images.set(product.images?.length ? product.images : [product.imageUrl].filter(Boolean));
     this.specs.set(product.specs ?? {});
+    this.variants.set(product.variants ?? {});
   }
 
   onCategoryChange(value: string): void {
     this.specs.set({});
+    this.variants.set({});
     this.category.set(value);
   }
 
@@ -89,15 +100,62 @@ export class AddProductComponent {
     this.specs.update((specs) => ({ ...specs, [key]: String(value) }));
   }
 
+  // --- Варианты, выбираемые покупателем ---
+
+  isVariant(key: string): boolean {
+    return !!this.variants()[key];
+  }
+
+  toggleVariant(key: string, enabled: boolean): void {
+    this.variants.update((variants) => {
+      const next = { ...variants };
+      if (enabled) {
+        next[key] = [];
+      } else {
+        delete next[key];
+      }
+      return next;
+    });
+  }
+
+  hasVariantValue(key: string, value: string): boolean {
+    return this.variants()[key]?.includes(value) ?? false;
+  }
+
+  toggleVariantValue(key: string, value: string, checked: boolean): void {
+    this.variants.update((variants) => {
+      const current = variants[key] ?? [];
+      const next = checked
+        ? [...current, value]
+        : current.filter((v) => v !== value);
+      return { ...variants, [key]: next };
+    });
+  }
+
+  // --- Изображения ---
+
+  addImage(): void {
+    const url = this.newImageUrl.trim();
+    if (!url || this.images().includes(url)) return;
+    this.images.update((images) => [...images, url]);
+    this.newImageUrl = '';
+  }
+
+  removeImage(index: number): void {
+    this.images.update((images) => images.filter((_, i) => i !== index));
+  }
+
   async submit(): Promise<void> {
     this.error = '';
     this.busy = true;
+    const images = this.images();
     const data = {
       title: this.title.trim(),
       description: this.description.trim(),
-      imageUrl: this.imageUrl.trim(),
       category: this.category() as 'phone' | 'laptop',
       specs: { ...this.specs() },
+      images,
+      variants: this.variants(),
     };
     try {
       if (this.editMode() && this.editingId) {
