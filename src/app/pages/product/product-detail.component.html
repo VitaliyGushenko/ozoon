@@ -1,0 +1,31 @@
+<section class="product">
+  @if (!loaded()) {
+    <p class="status">Загрузка…</p>
+  } @else if (!product()) {
+    <p class="status">Товар не найден.</p>
+  } @else {
+    <a routerLink="/" class="back">← Назад к товарам</a>
+
+    <div class="layout">
+      <div class="image-side">
+        <img [src]="product()!.imageUrl" [alt]="product()!.title" />
+      </div>
+
+      <div class="info-side">
+        <p class="category">{{ categoryLabel() }}</p>
+        <h1>{{ product()!.title }}</h1>
+        <p class="description">{{ product()!.description }}</p>
+
+        <h2>Характеристики</h2>
+        <table class="specs">
+          @for (row of specRows(); track row.def.key) {
+            <tr>
+              <th>{{ row.def.label }}</th>
+              <td>{{ row.value }}</td>
+            </tr>
+          }
+        </table>
+      </div>
+    </div>
+  }
+</section>

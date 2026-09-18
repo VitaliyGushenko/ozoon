@@ -6,15 +6,17 @@
   } @else {
     <div class="grid">
       @for (product of products(); track product.id) {
-        <article class="card">
-          <div class="card-image">
-            <img [src]="product.imageUrl" [alt]="product.title" loading="lazy" />
-          </div>
-          <div class="card-body">
-            <h2>{{ product.title }}</h2>
-            <p>{{ product.description }}</p>
-          </div>
-        </article>
+        <a class="card-link" [routerLink]="['/product', product.id]">
+          <article class="card">
+            <div class="card-image">
+              <img [src]="product.imageUrl" [alt]="product.title" loading="lazy" />
+            </div>
+            <div class="card-body">
+              <h2>{{ product.title }}</h2>
+              <p>{{ product.description }}</p>
+            </div>
+          </article>
+        </a>
       }
     </div>
   }

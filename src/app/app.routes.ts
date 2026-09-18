@@ -5,6 +5,7 @@ import { HomeComponent } from './pages/home/home.component';
 import { AuthComponent } from './pages/auth/auth.component';
 import { ProfileComponent } from './pages/profile/profile.component';
 import { AddProductComponent } from './pages/add-product/add-product.component';
+import { ProductDetailComponent } from './pages/product/product-detail.component';
 
 export const routes: Routes = [
   { path: '', component: HomeComponent, title: 'Ozoon — маркетплейс' },
@@ -20,6 +21,11 @@ export const routes: Routes = [
     component: AddProductComponent,
     canActivate: [sellerGuard],
     title: 'Новый товар',
+  },
+  {
+    path: 'product/:id',
+    component: ProductDetailComponent,
+    title: 'Товар',
   },
   { path: '**', redirectTo: '' },
 ];
