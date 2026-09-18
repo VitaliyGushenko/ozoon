@@ -9,6 +9,8 @@ export interface Product {
   title: string;
   description: string;
   imageUrl: string;
+  category: 'phone' | 'laptop';
+  specs: Record<string, string>;
   sellerUid: string;
   createdAt: number;
 }

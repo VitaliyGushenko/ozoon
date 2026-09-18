@@ -20,6 +20,8 @@ service cloud.firestore {
         && request.resource.data.description.size() <= 1000
         && request.resource.data.imageUrl is string
         && request.resource.data.imageUrl.size() > 0
+        && request.resource.data.category in ['phone', 'laptop']
+        && request.resource.data.specs is map
         && request.resource.data.sellerUid == request.auth.uid;
       allow update, delete: if request.auth != null
         && resource.data.sellerUid == request.auth.uid;

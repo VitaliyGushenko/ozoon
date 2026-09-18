@@ -25,7 +25,9 @@ export class ProductsService {
     { idField: 'id' }
   ) as Observable<Product[]>;
 
-  addProduct(product: Pick<Product, 'title' | 'description' | 'imageUrl'>) {
+  addProduct(
+    product: Pick<Product, 'title' | 'description' | 'imageUrl' | 'category' | 'specs'>
+  ) {
     const user = this.authService.user();
     if (!user) throw new Error('Только авторизованный продавец может добавить товар');
     const col = collection(this.firestore, 'products');

@@ -3,6 +3,21 @@
     <h1>Новый товар</h1>
 
     <label>
+      Категория
+      <select
+        name="category"
+        [ngModel]="category()"
+        (ngModelChange)="onCategoryChange($event)"
+        required
+      >
+        <option value="" disabled>Выберите категорию</option>
+        @for (cat of categories; track cat.value) {
+          <option [value]="cat.value">{{ cat.label }}</option>
+        }
+      </select>
+    </label>
+
+    <label>
       Название
       <input
         type="text"
@@ -39,11 +54,63 @@
       <img class="preview" [src]="imageUrl" alt="Предпросмотр" />
     }
 
+    @if (category()) {
+      <h2>Характеристики</h2>
+      <div class="specs">
+        @for (spec of currentSpecs(); track spec.key) {
+          <label>
+            {{ spec.label }}
+            @switch (spec.type) {
+              @case ('select') {
+                <select
+                  [ngModelOptions]="{ standalone: true }"
+                  [ngModel]="specs()[spec.key]"
+                  (ngModelChange)="onSpecChange(spec.key, $event)"
+                >
+                  <option value="" disabled>—</option>
+                  @for (opt of spec.options; track opt) {
+                    <option [value]="opt">{{ opt }}</option>
+                  }
+                </select>
+              }
+              @case ('number') {
+                <input
+                  type="number"
+                  min="0"
+                  [ngModelOptions]="{ standalone: true }"
+                  [ngModel]="specs()[spec.key]"
+                  (ngModelChange)="onSpecChange(spec.key, $event)"
+                />
+              }
+              @default {
+                <input
+                  type="text"
+                  [ngModelOptions]="{ standalone: true }"
+                  [ngModel]="specs()[spec.key]"
+                  (ngModelChange)="onSpecChange(spec.key, $event)"
+                />
+              }
+            }
+          </label>
+        }
+      </div>
+    }
+
     @if (error) {
       <p class="error">{{ error }}</p>
     }
 
-    <button type="submit" [disabled]="busy || !title || !description || !imageUrl">
+    <button
+      type="submit"
+      [disabled]="
+        busy ||
+        !category() ||
+        !title ||
+        !description ||
+        !imageUrl ||
+        !specsComplete()
+      "
+    >
       {{ busy ? 'Публикуем…' : 'Опубликовать' }}
     </button>
   </form>
