@@ -1,86 +1,43 @@
 .auth {
   display: flex;
   justify-content: center;
-  padding: 48px 16px;
+  padding: 56px 16px;
 }
 
 .auth-card {
   width: 100%;
-  max-width: 400px;
-  border: 1px solid #e0e0e0;
-  border-radius: 10px;
-  padding: 28px;
-  background: #fff;
+  max-width: 420px;
 
   h1 {
-    margin: 0 0 20px;
-    font-size: 1.4rem;
+    margin: 0 0 22px;
+    font-size: 1.45rem;
     text-align: center;
   }
 
   form {
     display: flex;
     flex-direction: column;
-    gap: 14px;
-  }
-
-  label {
-    display: flex;
-    flex-direction: column;
-    gap: 6px;
-    font-size: 0.9rem;
-    color: #333;
-
-    input {
-      padding: 10px 12px;
-      border: 1px solid #ccc;
-      border-radius: 6px;
-      font-size: 1rem;
-
-      &:focus {
-        outline: none;
-        border-color: #3f51b5;
-      }
-    }
-  }
-
-  button[type='submit'] {
-    padding: 10px;
-    border: 0;
-    border-radius: 6px;
-    background: #3f51b5;
-    color: #fff;
-    font-size: 1rem;
-    cursor: pointer;
-
-    &:hover:not(:disabled) {
-      background: #303f9f;
-    }
-
-    &:disabled {
-      opacity: 0.6;
-      cursor: default;
-    }
+    gap: 16px;
   }
 }
 
 .error {
   margin: 0;
-  color: #c62828;
+  color: var(--danger);
   font-size: 0.9rem;
 }
 
 .switch {
-  margin: 18px 0 0;
+  margin: 20px 0 0;
   text-align: center;
   font-size: 0.9rem;
-  color: #555;
+  color: var(--text-2);
 }
 
 .link {
   background: none;
   border: 0;
-  color: #3f51b5;
+  color: var(--accent);
   font: inherit;
   cursor: pointer;
   text-decoration: underline;

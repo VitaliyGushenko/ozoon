@@ -1,13 +1,15 @@
 <section class="product">
   @if (!loaded()) {
-    <p class="status">Загрузка…</p>
+    <ui-spinner />
   } @else if (!product()) {
-    <p class="status">Товар не найден.</p>
+    <ui-card>
+      <ui-empty-state icon="🔍" text="Товар не найден."></ui-empty-state>
+    </ui-card>
   } @else {
     <a routerLink="/" class="back">← Назад к товарам</a>
 
     <div class="layout">
-      <div class="image-side">
+      <ui-card padding="none" class="image-card">
         <div class="carousel">
           <img
             [src]="images()[currentImage()]"
@@ -17,12 +19,14 @@
 
           @if (images().length > 1) {
             <button
+              ui-icon-button
               type="button"
               class="arrow prev"
               (click)="prevImage()"
               aria-label="Предыдущее изображение"
             >‹</button>
             <button
+              ui-icon-button
               type="button"
               class="arrow next"
               (click)="nextImage()"
@@ -42,20 +46,26 @@
             </div>
           }
         </div>
-      </div>
+      </ui-card>
 
-      <div class="info-side">
-        <p class="category">{{ categoryLabel() }}</p>
+      <ui-card padding="lg" class="info-card">
+        @if (categoryLabel()) {
+          <ui-badge tone="accent">{{ categoryLabel() }}</ui-badge>
+        }
         <h1>{{ product()!.title }}</h1>
         <p class="description">{{ product()!.description }}</p>
 
         @if (isOwner()) {
           <div class="owner-actions">
             <a
-              class="edit-btn"
+              ui-button
+              variant="glass"
+              size="sm"
               [routerLink]="['/product', product()!.id, 'edit']"
             >Редактировать</a>
-            <button type="button" class="delete-btn" (click)="delete()">Удалить</button>
+            <button ui-button variant="danger" size="sm" type="button" (click)="delete()">
+              Удалить
+            </button>
           </div>
         }
 
@@ -63,17 +73,12 @@
           <h2>Конфигурация</h2>
           <div class="variants">
             @for (v of variantEntries(); track v.key) {
-              <label>
-                {{ v.def.label }}
-                <select
-                  [value]="selectedValue(v.key, v.values)"
-                  (change)="onVariantChange(v.key, $any($event.target).value)"
-                >
-                  @for (value of v.values; track value) {
-                    <option [value]="value">{{ value }}</option>
-                  }
-                </select>
-              </label>
+              <ui-select
+                [label]="v.def.label"
+                [options]="variantOptions(v.values)"
+                [value]="selectedValue(v.key, v.values)"
+                (valueChange)="onVariantChange(v.key, $event)"
+              ></ui-select>
             }
           </div>
         }
@@ -87,7 +92,7 @@
             </tr>
           }
         </table>
-      </div>
+      </ui-card>
     </div>
   }
 </section>

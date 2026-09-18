@@ -1,5 +1,4 @@
 import { Component, inject } from '@angular/core';
-import { FormsModule } from '@angular/forms';
 import { toSignal } from '@angular/core/rxjs-interop';
 import {
   collection,
@@ -11,12 +10,16 @@ import {
 import { Observable } from 'rxjs';
 import { AuthService } from '../../core/auth.service';
 import { UserProfile, UserRoles } from '../../core/models';
+import { UiBadge } from '../../ui/badge.component';
+import { UiCheckbox } from '../../ui/checkbox.component';
+import { UiCard } from '../../ui/card.component';
+import { UiEmptyState } from '../../ui/empty-state.component';
 
 type UserRow = UserProfile & { id: string };
 
 @Component({
   selector: 'app-users',
-  imports: [FormsModule],
+  imports: [UiBadge, UiCheckbox, UiCard, UiEmptyState],
   templateUrl: './users.component.html',
   styleUrl: './users.component.less',
 })

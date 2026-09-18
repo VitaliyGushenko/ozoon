@@ -1,4 +1,80 @@
-/* Глобальные стили приложения */
+/* ============================================================
+   Ozoon Design System — Glassmorphism
+   Токены темы: светлая по умолчанию, тёмная через [data-theme="dark"]
+   ============================================================ */
+
+:root {
+  /* Палитра светлой темы */
+  --bg-base: #eef1f8;
+  --text-1: #1c2030;
+  --text-2: rgba(28, 32, 48, 0.65);
+
+  /* Стекло */
+  --glass-bg: rgba(255, 255, 255, 0.55);
+  --glass-bg-strong: rgba(255, 255, 255, 0.75);
+  --glass-bg-soft: rgba(255, 255, 255, 0.35);
+  --glass-border: rgba(255, 255, 255, 0.65);
+  --glass-blur: 20px;
+
+  /* Акценты */
+  --accent: #6d5df1;
+  --accent-2: #d962b8;
+  --accent-gradient: linear-gradient(135deg, #6d5df1, #d962b8);
+  --accent-text: #ffffff;
+  --accent-soft: rgba(109, 93, 241, 0.14);
+
+  --success: #2e9e6b;
+  --success-soft: rgba(46, 158, 107, 0.15);
+  --danger: #d64550;
+  --danger-soft: rgba(214, 69, 80, 0.14);
+
+  --shadow-card: 0 8px 32px rgba(31, 38, 80, 0.12);
+  --shadow-hover: 0 16px 40px rgba(31, 38, 80, 0.18);
+
+  /* Формы */
+  --field-bg: rgba(255, 255, 255, 0.6);
+  --field-border: rgba(28, 32, 48, 0.16);
+  --field-border-focus: #6d5df1;
+
+  /* Радиусы */
+  --radius-sm: 10px;
+  --radius-md: 14px;
+  --radius-lg: 20px;
+  --radius-full: 999px;
+
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto,
+    Helvetica, Arial, sans-serif;
+}
+
+[data-theme='dark'] {
+  --bg-base: #12141d;
+  --text-1: #eef0f8;
+  --text-2: rgba(238, 240, 248, 0.6);
+
+  --glass-bg: rgba(30, 34, 50, 0.55);
+  --glass-bg-strong: rgba(36, 41, 60, 0.75);
+  --glass-bg-soft: rgba(30, 34, 50, 0.35);
+  --glass-border: rgba(255, 255, 255, 0.12);
+
+  --accent: #a78bfa;
+  --accent-2: #f472b6;
+  --accent-gradient: linear-gradient(135deg, #8b5cf6, #ec4899);
+  --accent-text: #ffffff;
+  --accent-soft: rgba(167, 139, 250, 0.18);
+
+  --success: #4ade80;
+  --success-soft: rgba(74, 222, 128, 0.16);
+  --danger: #f87171;
+  --danger-soft: rgba(248, 113, 113, 0.16);
+
+  --shadow-card: 0 8px 32px rgba(0, 0, 0, 0.45);
+  --shadow-hover: 0 16px 44px rgba(0, 0, 0, 0.55);
+
+  --field-bg: rgba(255, 255, 255, 0.07);
+  --field-border: rgba(255, 255, 255, 0.18);
+  --field-border-focus: #a78bfa;
+}
+
 * {
   box-sizing: border-box;
 }
@@ -11,8 +87,77 @@ body {
 }
 
 body {
-  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto,
-    Helvetica, Arial, sans-serif;
-  color: #222;
-  background: #fafafa;
+  color: var(--text-1);
+  background: var(--bg-base);
+  -webkit-font-smoothing: antialiased;
+  transition: background 0.4s ease, color 0.3s ease;
+}
+
+/* Живой градиент-мешь на фоне всего приложения */
+.mesh-bg {
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  overflow: hidden;
+  pointer-events: none;
+
+  &::before,
+  &::after {
+    content: '';
+    position: absolute;
+    width: 60vmax;
+    height: 60vmax;
+    border-radius: 50%;
+    filter: blur(90px);
+    opacity: 0.55;
+  }
+
+  &::before {
+    background: radial-gradient(circle, #8b7cf7 0%, transparent 70%);
+    top: -20vmax;
+    left: -15vmax;
+    animation: mesh-drift-1 26s ease-in-out infinite alternate;
+  }
+
+  &::after {
+    background: radial-gradient(circle, #f08cc6 0%, transparent 70%);
+    bottom: -25vmax;
+    right: -15vmax;
+    animation: mesh-drift-2 32s ease-in-out infinite alternate;
+  }
+}
+
+[data-theme='dark'] .mesh-bg {
+  &::before,
+  &::after {
+    opacity: 0.35;
+  }
+}
+
+@keyframes mesh-drift-1 {
+  from {
+    transform: translate(0, 0) scale(1);
+  }
+  to {
+    transform: translate(18vmax, 12vmax) scale(1.25);
+  }
+}
+
+@keyframes mesh-drift-2 {
+  from {
+    transform: translate(0, 0) scale(1.15);
+  }
+  to {
+    transform: translate(-15vmax, -10vmax) scale(0.95);
+  }
+}
+
+/* Стеклянная поверхность — общий миксин-класс для нестандартных случаев */
+.glass {
+  background: var(--glass-bg);
+  backdrop-filter: blur(var(--glass-blur));
+  -webkit-backdrop-filter: blur(var(--glass-blur));
+  border: 1px solid var(--glass-border);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-card);
 }

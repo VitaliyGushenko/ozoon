@@ -6,10 +6,15 @@ import { of, switchMap, map, catchError } from 'rxjs';
 import { AuthService } from '../../core/auth.service';
 import { ApplicationsService } from '../../core/applications.service';
 import { SellerApplication } from '../../core/models';
+import { UiBadge } from '../../ui/badge.component';
+import { UiButton } from '../../ui/button.component';
+import { UiCard } from '../../ui/card.component';
+import { UiIconButton } from '../../ui/icon-button.component';
+import { UiSpinner } from '../../ui/spinner.component';
 
 @Component({
   selector: 'app-profile',
-  imports: [],
+  imports: [UiBadge, UiButton, UiCard, UiIconButton, UiSpinner],
   templateUrl: './profile.component.html',
   styleUrl: './profile.component.less',
 })

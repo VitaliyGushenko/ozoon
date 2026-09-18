@@ -2,45 +2,43 @@
   <h1>Пользователи</h1>
 
   @if (users().length === 0) {
-    <p class="empty">Пользователей пока нет.</p>
+    <ui-card>
+      <ui-empty-state icon="👥" text="Пользователей пока нет."></ui-empty-state>
+    </ui-card>
   } @else {
-    <table class="users-table">
-      <thead>
-        <tr>
-          <th>Email</th>
-          <th>Роли</th>
-        </tr>
-      </thead>
-      <tbody>
-        @for (user of users(); track user.id) {
+    <ui-card class="users-card">
+      <table class="users-table">
+        <thead>
           <tr>
-            <td class="email">
-              {{ user.email }}
-              @if (isAdmin() && user.email === 'vit@mail.ru') {
-                <span class="badge admin">Админ</span>
-              }
-            </td>
-            <td class="roles">
-              <label class="role">
-                <input
-                  type="checkbox"
-                  [checked]="hasRole(user, 'seller')"
-                  (change)="toggleRole(user.id, 'seller', $any($event.target).checked)"
-                />
-                Продавец
-              </label>
-              <label class="role">
-                <input
-                  type="checkbox"
-                  [checked]="hasRole(user, 'moderator')"
-                  (change)="toggleRole(user.id, 'moderator', $any($event.target).checked)"
-                />
-                Модератор
-              </label>
-            </td>
+            <th>Email</th>
+            <th>Роли</th>
           </tr>
-        }
-      </tbody>
-    </table>
+        </thead>
+        <tbody>
+          @for (user of users(); track user.id) {
+            <tr>
+              <td class="email">
+                {{ user.email }}
+                @if (isAdmin() && user.email === 'vit@mail.ru') {
+                  <ui-badge tone="accent">Админ</ui-badge>
+                }
+              </td>
+              <td class="roles">
+                <ui-checkbox
+                  label="Продавец"
+                  [value]="hasRole(user, 'seller')"
+                  (valueChange)="toggleRole(user.id, 'seller', $event === true)"
+                ></ui-checkbox>
+                <ui-checkbox
+                  label="Модератор"
+                  [value]="hasRole(user, 'moderator')"
+                  (valueChange)="toggleRole(user.id, 'moderator', $event === true)"
+                ></ui-checkbox>
+              </td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </ui-card>
   }
 </section>

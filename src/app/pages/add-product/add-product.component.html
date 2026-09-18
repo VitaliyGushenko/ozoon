@@ -1,166 +1,150 @@
 <section class="add-product">
-  <form class="form-card" (ngSubmit)="submit()">
-    <h1>{{ editMode() ? 'Редактирование товара' : 'Новый товар' }}</h1>
+  <form (ngSubmit)="submit()">
+    <ui-card padding="lg" class="form-card">
+      <h1>{{ editMode() ? 'Редактирование товара' : 'Новый товар' }}</h1>
 
-    <label>
-      Категория
-      <select
-        name="category"
-        [ngModel]="category()"
-        (ngModelChange)="onCategoryChange($event)"
-        required
-      >
-        <option value="" disabled>Выберите категорию</option>
-        @for (cat of categories; track cat.value) {
-          <option [value]="cat.value">{{ cat.label }}</option>
-        }
-      </select>
-    </label>
+      <ui-select
+        label="Категория"
+        [options]="categoryOptions"
+        placeholder="Выберите категорию"
+        [value]="category()"
+        (valueChange)="onCategoryChange($event)"
+      ></ui-select>
 
-    <label>
-      Название
-      <input
-        type="text"
-        name="title"
+      <ui-input
+        label="Название"
+        placeholder="Например, Смартфон Apple iPhone 15 Pro"
         [(ngModel)]="title"
+        name="title"
         required
-        maxlength="100"
-      />
-    </label>
+      ></ui-input>
 
-    <label>
-      Описание
-      <textarea
-        name="description"
+      <ui-textarea
+        label="Описание"
+        placeholder="Расскажите о товаре"
         [(ngModel)]="description"
-        rows="4"
+        name="description"
         required
-        maxlength="1000"
-      ></textarea>
-    </label>
+      ></ui-textarea>
 
-    <div class="images-block">
-      <label>
-        Ссылка на изображение
-        <input
-          type="url"
-          name="newImageUrl"
-          [(ngModel)]="newImageUrl"
-          placeholder="https://example.com/photo.jpg"
-        />
-      </label>
-      <button
-        type="button"
-        class="add-image-btn"
-        (click)="addImage()"
-        [disabled]="!newImageUrl.trim()"
-      >+ Добавить</button>
+      <div class="images-block">
+        <span class="images-title">Изображения</span>
+        <div class="images-row">
+          <ui-input
+            class="images-url"
+            placeholder="https://example.com/photo.jpg"
+            [(ngModel)]="newImageUrl"
+            name="newImageUrl"
+          ></ui-input>
+          <button
+            ui-button
+            variant="glass"
+            type="button"
+            (click)="addImage()"
+            [disabled]="!newImageUrl.trim()"
+          >+ Добавить</button>
+        </div>
 
-      @if (images().length) {
-        <div class="image-list">
-          @for (img of images(); track $index) {
-            <div class="thumb">
-              <img [src]="img" alt="Изображение товара" />
-              <button
-                type="button"
-                class="remove"
-                (click)="removeImage($index)"
-                title="Убрать"
-              >×</button>
+        @if (images().length) {
+          <div class="image-list">
+            @for (img of images(); track $index) {
+              <div class="thumb">
+                <img [src]="img" alt="Изображение товара" />
+                <button
+                  ui-icon-button
+                  tone="reject"
+                  solid
+                  type="button"
+                  class="remove"
+                  title="Убрать"
+                  (click)="removeImage($index)"
+                >×</button>
+              </div>
+            }
+          </div>
+          <p class="hint">Первое изображение — главное.</p>
+        }
+      </div>
+
+      @if (category()) {
+        <h2>Характеристики</h2>
+        <div class="specs">
+          @for (spec of currentSpecs(); track spec.key) {
+            <div class="spec-field">
+              @if (!isVariant(spec.key)) {
+                @switch (spec.type) {
+                  @case ('select') {
+                    <ui-select
+                      [label]="spec.label"
+                      [options]="optionsOf(spec)"
+                      placeholder="—"
+                      [value]="specs()[spec.key]"
+                      (valueChange)="onSpecChange(spec.key, $event)"
+                    ></ui-select>
+                  }
+                  @case ('number') {
+                    <ui-input
+                      [label]="spec.label"
+                      type="number"
+                      [value]="specs()[spec.key]"
+                      (valueChange)="onSpecChange(spec.key, $event)"
+                    ></ui-input>
+                  }
+                  @default {
+                    <ui-input
+                      [label]="spec.label"
+                      type="text"
+                      [value]="specs()[spec.key]"
+                      (valueChange)="onSpecChange(spec.key, $event)"
+                    ></ui-input>
+                  }
+                }
+              } @else {
+                <span class="spec-label">{{ spec.label }}</span>
+                <div class="variant-options">
+                  @for (opt of spec.options; track opt) {
+                    <ui-checkbox
+                      [label]="opt"
+                      [value]="hasVariantValue(spec.key, opt)"
+                      (valueChange)="toggleVariantValue(spec.key, opt, $event === true)"
+                    ></ui-checkbox>
+                  }
+                </div>
+              }
+
+              @if (spec.type === 'select') {
+                <ui-checkbox
+                  label="Покупатель выбирает при покупке"
+                  class="variant-toggle"
+                  [value]="isVariant(spec.key)"
+                  (valueChange)="toggleVariant(spec.key, $event === true)"
+                ></ui-checkbox>
+              }
             </div>
           }
         </div>
-        <p class="hint">Первое изображение — главное.</p>
       }
-    </div>
 
-    @if (category()) {
-      <h2>Характеристики</h2>
-      <div class="specs">
-        @for (spec of currentSpecs(); track spec.key) {
-          <div class="spec-field">
-            @if (!isVariant(spec.key)) {
-              <label>
-                {{ spec.label }}
-                @switch (spec.type) {
-                  @case ('select') {
-                    <select
-                      [ngModelOptions]="{ standalone: true }"
-                      [ngModel]="specs()[spec.key]"
-                      (ngModelChange)="onSpecChange(spec.key, $event)"
-                    >
-                      <option value="" disabled>—</option>
-                      @for (opt of spec.options; track opt) {
-                        <option [value]="opt">{{ opt }}</option>
-                      }
-                    </select>
-                  }
-                  @case ('number') {
-                    <input
-                      type="number"
-                      min="0"
-                      [ngModelOptions]="{ standalone: true }"
-                      [ngModel]="specs()[spec.key]"
-                      (ngModelChange)="onSpecChange(spec.key, $event)"
-                    />
-                  }
-                  @default {
-                    <input
-                      type="text"
-                      [ngModelOptions]="{ standalone: true }"
-                      [ngModel]="specs()[spec.key]"
-                      (ngModelChange)="onSpecChange(spec.key, $event)"
-                    />
-                  }
-                }
-              </label>
-            } @else {
-              <label class="spec-label">{{ spec.label }}</label>
-              <div class="variant-options">
-                @for (opt of spec.options; track opt) {
-                  <label class="variant-option">
-                    <input
-                      type="checkbox"
-                      [checked]="hasVariantValue(spec.key, opt)"
-                      (change)="toggleVariantValue(spec.key, opt, $any($event.target).checked)"
-                    />
-                    {{ opt }}
-                  </label>
-                }
-              </div>
-            }
+      @if (error) {
+        <p class="error">{{ error }}</p>
+      }
 
-            @if (spec.type === 'select') {
-              <label class="variant-toggle">
-                <input
-                  type="checkbox"
-                  [checked]="isVariant(spec.key)"
-                  (change)="toggleVariant(spec.key, $any($event.target).checked)"
-                />
-                Покупатель выбирает при покупке
-              </label>
-            }
-          </div>
-        }
-      </div>
-    }
-
-    @if (error) {
-      <p class="error">{{ error }}</p>
-    }
-
-    <button
-      type="submit"
-      [disabled]="
-        busy ||
-        !category() ||
-        !title ||
-        !description ||
-        !imagesComplete() ||
-        !specsComplete()
-      "
-    >
-      {{ busy ? 'Сохраняем…' : editMode() ? 'Сохранить изменения' : 'Опубликовать' }}
-    </button>
+      <button
+        ui-button
+        variant="primary"
+        [block]="true"
+        type="submit"
+        [disabled]="
+          busy ||
+          !category() ||
+          !title ||
+          !description ||
+          !imagesComplete() ||
+          !specsComplete()
+        "
+      >
+        {{ busy ? 'Сохраняем…' : editMode() ? 'Сохранить изменения' : 'Опубликовать' }}
+      </button>
+    </ui-card>
   </form>
 </section>

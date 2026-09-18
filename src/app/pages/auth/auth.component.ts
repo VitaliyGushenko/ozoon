@@ -2,6 +2,9 @@ import { Component, inject, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 import { AuthService } from '../../core/auth.service';
+import { UiButton } from '../../ui/button.component';
+import { UiCard } from '../../ui/card.component';
+import { UiInput } from '../../ui/input.component';
 
 const ERROR_MESSAGES: Record<string, string> = {
   'auth/invalid-email': 'Некорректный email.',
@@ -16,7 +19,7 @@ const ERROR_MESSAGES: Record<string, string> = {
 
 @Component({
   selector: 'app-auth',
-  imports: [FormsModule],
+  imports: [FormsModule, UiButton, UiCard, UiInput],
   templateUrl: './auth.component.html',
   styleUrl: './auth.component.less',
 })

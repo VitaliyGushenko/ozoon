@@ -10,10 +10,26 @@ import { AuthService } from '../../core/auth.service';
 import { ProductsService } from '../../core/products.service';
 import { Product } from '../../core/models';
 import { CATEGORIES, SPEC_TEMPLATES, SpecDef } from '../../core/specs';
+import { UiBadge } from '../../ui/badge.component';
+import { UiButton } from '../../ui/button.component';
+import { UiCard } from '../../ui/card.component';
+import { UiEmptyState } from '../../ui/empty-state.component';
+import { UiIconButton } from '../../ui/icon-button.component';
+import { UiSelect } from '../../ui/select.component';
+import { UiSpinner } from '../../ui/spinner.component';
 
 @Component({
   selector: 'app-product-detail',
-  imports: [RouterLink],
+  imports: [
+    RouterLink,
+    UiBadge,
+    UiButton,
+    UiCard,
+    UiEmptyState,
+    UiIconButton,
+    UiSelect,
+    UiSpinner,
+  ],
   templateUrl: './product-detail.component.html',
   styleUrl: './product-detail.component.less',
 })
@@ -118,8 +134,16 @@ export class ProductDetailComponent {
     return selected[key] ?? values[0];
   }
 
-  onVariantChange(key: string, value: string): void {
-    this.selectedVariants.update((selected) => ({ ...selected, [key]: value }));
+  /** Варианты для селектора: [{value, label}]. */
+  variantOptions(values: string[]) {
+    return values.map((value) => ({ value, label: value }));
+  }
+
+  onVariantChange(key: string, value: unknown): void {
+    this.selectedVariants.update((selected) => ({
+      ...selected,
+      [key]: String(value),
+    }));
   }
 
   /** Фиксированные характеристики (варианты показываются как селекторы выше). */

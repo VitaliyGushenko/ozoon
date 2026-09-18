@@ -1,36 +1,31 @@
 <section class="auth">
-  <div class="auth-card">
+  <ui-card padding="lg" class="auth-card">
     <h1>{{ mode() === 'login' ? 'Вход' : 'Регистрация' }}</h1>
 
     <form (ngSubmit)="submit()">
-      <label>
-        Email
-        <input
-          type="email"
-          name="email"
-          [(ngModel)]="email"
-          required
-          autocomplete="email"
-        />
-      </label>
+      <ui-input
+        label="Email"
+        type="email"
+        placeholder="you@example.com"
+        [(ngModel)]="email"
+        name="email"
+        required
+      ></ui-input>
 
-      <label>
-        Пароль
-        <input
-          type="password"
-          name="password"
-          [(ngModel)]="password"
-          required
-          [minlength]="6"
-          [autocomplete]="mode() === 'login' ? 'current-password' : 'new-password'"
-        />
-      </label>
+      <ui-input
+        label="Пароль"
+        type="password"
+        placeholder="Минимум 6 символов"
+        [(ngModel)]="password"
+        name="password"
+        required
+      ></ui-input>
 
       @if (error) {
         <p class="error">{{ error }}</p>
       }
 
-      <button type="submit" [disabled]="busy">
+      <button ui-button variant="primary" [block]="true" type="submit" [disabled]="busy">
         {{ busy ? 'Подождите…' : mode() === 'login' ? 'Войти' : 'Зарегистрироваться' }}
       </button>
     </form>
@@ -48,5 +43,5 @@
         </button>
       }
     </p>
-  </div>
+  </ui-card>
 </section>

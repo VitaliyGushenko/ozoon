@@ -1,36 +1,36 @@
 <section class="profile">
-  <div class="profile-card">
+  <ui-card padding="lg" class="profile-card">
     <h1>Профиль</h1>
 
     <p class="email">{{ user()?.email }}</p>
 
     <div class="roles">
-      <span class="badge">Покупатель</span>
+      <ui-badge>Покупатель</ui-badge>
       @if (isAdmin()) {
-        <span class="badge active">Админ</span>
+        <ui-badge tone="accent">Админ</ui-badge>
       }
       @if (isModerator()) {
-        <span class="badge active">Модератор</span>
+        <ui-badge tone="accent">Модератор</ui-badge>
       }
       @if (isSeller()) {
-        <span class="badge active">Продавец</span>
+        <ui-badge tone="success">Продавец</ui-badge>
       }
     </div>
 
     @if (canApply()) {
       <div class="apply-block">
         @if (myApplication() === undefined) {
-          <p class="hint">Загрузка…</p>
+          <ui-spinner />
         } @else if (myApplication()) {
           <p class="hint">
             Заявка на роль продавца отправлена и ожидает рассмотрения.
           </p>
-          <button type="button" class="cancel-btn" (click)="cancelApplication()">
+          <button ui-button variant="glass" size="sm" type="button" (click)="cancelApplication()">
             Отменить заявку
           </button>
         } @else {
           <p class="hint">Хотите продавать на Ozoon?</p>
-          <button type="button" class="apply-btn" (click)="apply()">
+          <button ui-button variant="primary" type="button" (click)="apply()">
             Стать продавцом
           </button>
         }
@@ -49,14 +49,16 @@
                 <span class="app-email">{{ app.email }}</span>
                 <span class="actions">
                   <button
+                    ui-icon-button
+                    tone="accept"
                     type="button"
-                    class="icon-btn accept"
                     title="Принять"
                     (click)="approve(app.uid)"
                   >✓</button>
                   <button
+                    ui-icon-button
+                    tone="reject"
                     type="button"
-                    class="icon-btn reject"
                     title="Отклонить"
                     (click)="reject(app.uid)"
                   >✕</button>
@@ -68,6 +70,6 @@
       </div>
     }
 
-    <button type="button" class="logout" (click)="logout()">Выйти</button>
-  </div>
+    <button ui-button variant="danger" type="button" (click)="logout()">Выйти</button>
+  </ui-card>
 </section>

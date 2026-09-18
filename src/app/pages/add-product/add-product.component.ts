@@ -7,10 +7,25 @@ import { AuthService } from '../../core/auth.service';
 import { ProductsService } from '../../core/products.service';
 import { Product } from '../../core/models';
 import { CATEGORIES, SPEC_TEMPLATES, SpecDef } from '../../core/specs';
+import { SelectOption } from '../../ui/select.component';
+import { UiButton } from '../../ui/button.component';
+import { UiCard } from '../../ui/card.component';
+import { UiCheckbox } from '../../ui/checkbox.component';
+import { UiInput } from '../../ui/input.component';
+import { UiSelect } from '../../ui/select.component';
+import { UiTextarea } from '../../ui/textarea.component';
 
 @Component({
   selector: 'app-add-product',
-  imports: [FormsModule],
+  imports: [
+    FormsModule,
+    UiButton,
+    UiCard,
+    UiCheckbox,
+    UiInput,
+    UiSelect,
+    UiTextarea,
+  ],
   templateUrl: './add-product.component.html',
   styleUrl: './add-product.component.less',
 })
@@ -22,6 +37,10 @@ export class AddProductComponent {
   private router = inject(Router);
 
   readonly categories = CATEGORIES;
+  readonly categoryOptions: SelectOption[] = CATEGORIES.map((c) => ({
+    value: c.value,
+    label: c.label,
+  }));
 
   readonly category = signal<string>('');
   readonly specs = signal<Record<string, string>>({});
@@ -85,18 +104,27 @@ export class AddProductComponent {
     this.category.set(product.category);
     this.title = product.title;
     this.description = product.description;
-    this.images.set(product.images?.length ? product.images : [product.imageUrl].filter(Boolean));
+    this.images.set(
+      product.images?.length ? product.images : [product.imageUrl].filter(Boolean)
+    );
     this.specs.set(product.specs ?? {});
     this.variants.set(product.variants ?? {});
   }
 
-  onCategoryChange(value: string): void {
-    this.specs.set({});
-    this.variants.set({});
-    this.category.set(value);
+  optionsOf(spec: SpecDef): SelectOption[] {
+    return (spec.options ?? []).map((option) => ({
+      value: option,
+      label: option,
+    }));
   }
 
-  onSpecChange(key: string, value: string | number): void {
+  onCategoryChange(value: unknown): void {
+    this.specs.set({});
+    this.variants.set({});
+    this.category.set(String(value));
+  }
+
+  onSpecChange(key: string, value: unknown): void {
     this.specs.update((specs) => ({ ...specs, [key]: String(value) }));
   }
 

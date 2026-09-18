@@ -1,30 +1,26 @@
 .profile {
   display: flex;
   justify-content: center;
-  padding: 48px 16px;
+  padding: 56px 16px;
 }
 
 .profile-card {
   width: 100%;
-  max-width: 400px;
-  border: 1px solid #e0e0e0;
-  border-radius: 10px;
-  padding: 28px;
-  background: #fff;
+  max-width: 440px;
   display: flex;
   flex-direction: column;
-  gap: 18px;
+  gap: 20px;
 
   h1 {
     margin: 0;
-    font-size: 1.4rem;
+    font-size: 1.45rem;
     text-align: center;
   }
 }
 
 .email {
   margin: 0;
-  color: #555;
+  color: var(--text-2);
   text-align: center;
 }
 
@@ -35,73 +31,32 @@
   gap: 8px;
 }
 
-.badge {
-  padding: 4px 12px;
-  border-radius: 14px;
-  background: #f0f0f0;
-  color: #666;
-  font-size: 0.85rem;
-  font-weight: 500;
-
-  &.active {
-    background: #e8eaf6;
-    color: #3f51b5;
-  }
-}
-
 .apply-block {
   display: flex;
   flex-direction: column;
-  gap: 10px;
+  gap: 12px;
   align-items: center;
-  padding: 14px;
-  border: 1px solid #e0e0e0;
-  border-radius: 8px;
-  background: #fafafa;
+  padding: 16px;
+  border: 1px solid var(--glass-border);
+  border-radius: var(--radius-md);
+  background: var(--glass-bg-soft);
 }
 
 .hint {
   margin: 0;
   font-size: 0.9rem;
-  color: #666;
+  color: var(--text-2);
   text-align: center;
 }
 
-.apply-btn {
-  padding: 10px 20px;
-  border: 0;
-  border-radius: 6px;
-  background: #3f51b5;
-  color: #fff;
-  font-size: 0.95rem;
-  cursor: pointer;
-
-  &:hover {
-    background: #303f9f;
-  }
-}
-
-.cancel-btn {
-  padding: 8px 16px;
-  border: 1px solid #999;
-  border-radius: 6px;
-  background: none;
-  color: #666;
-  font-size: 0.9rem;
-  cursor: pointer;
-
-  &:hover {
-    background: #eee;
-  }
-}
-
 .applications {
-  border-top: 1px solid #eee;
-  padding-top: 14px;
+  border-top: 1px solid var(--glass-border);
+  padding-top: 16px;
 
   h2 {
     margin: 0 0 12px;
     font-size: 1.05rem;
+    color: var(--text-1);
   }
 }
 
@@ -119,15 +74,16 @@
   align-items: center;
   justify-content: space-between;
   gap: 10px;
-  padding: 10px 12px;
-  border: 1px solid #e0e0e0;
-  border-radius: 8px;
-  background: #fafafa;
+  padding: 10px 14px;
+  border: 1px solid var(--glass-border);
+  border-radius: var(--radius-md);
+  background: var(--glass-bg-soft);
 }
 
 .app-email {
   font-size: 0.92rem;
   word-break: break-all;
+  color: var(--text-1);
 }
 
 .actions {
@@ -136,45 +92,6 @@
   flex-shrink: 0;
 }
 
-.icon-btn {
-  width: 32px;
-  height: 32px;
-  border: 0;
-  border-radius: 50%;
-  font-size: 16px;
-  line-height: 1;
-  cursor: pointer;
-  color: #fff;
-
-  &.accept {
-    background: #2e7d32;
-
-    &:hover {
-      background: #1b5e20;
-    }
-  }
-
-  &.reject {
-    background: #c62828;
-
-    &:hover {
-      background: #b71c1c;
-    }
-  }
-}
-
-.logout {
+.profile-card > [ui-button] {
   align-self: center;
-  padding: 10px 24px;
-  border: 1px solid #c62828;
-  border-radius: 6px;
-  background: none;
-  color: #c62828;
-  font-size: 1rem;
-  cursor: pointer;
-
-  &:hover {
-    background: #c62828;
-    color: #fff;
-  }
 }

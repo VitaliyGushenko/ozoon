@@ -2,12 +2,15 @@
   <h1>Товары</h1>
 
   @if (products().length === 0) {
-    <p class="empty">Товаров пока нет. Загляните позже!</p>
+    <ui-empty-state
+      icon="🛍️"
+      text="Товаров пока нет. Загляните позже!"
+    ></ui-empty-state>
   } @else {
     <div class="grid">
       @for (product of products(); track product.id) {
         <a class="card-link" [routerLink]="['/product', product.id]">
-          <article class="card">
+          <ui-card padding="none" class="card">
             <div class="card-image">
               <img
                 [src]="product.images?.[0] ?? product.imageUrl"
@@ -17,10 +20,13 @@
               />
             </div>
             <div class="card-body">
+              @if (categoryLabel(product.category)) {
+                <ui-badge tone="accent">{{ categoryLabel(product.category) }}</ui-badge>
+              }
               <h2>{{ product.title }}</h2>
               <p>{{ product.description }}</p>
             </div>
-          </article>
+          </ui-card>
         </a>
       }
     </div>

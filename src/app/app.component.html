@@ -1,4 +1,6 @@
-<header class="header">
+<div class="mesh-bg"></div>
+
+<header class="header glass">
   <div class="container">
     <a routerLink="/" class="logo">ozoon</a>
     <nav class="nav">
@@ -14,6 +16,16 @@
       } @else {
         <a routerLink="/auth">Войти</a>
       }
+      <button
+        ui-button
+        variant="glass"
+        size="sm"
+        type="button"
+        (click)="toggleTheme()"
+        [title]="theme() === 'light' ? 'Тёмная тема' : 'Светлая тема'"
+      >
+        {{ theme() === 'light' ? '🌙' : '☀️' }}
+      </button>
     </nav>
   </div>
 </header>
