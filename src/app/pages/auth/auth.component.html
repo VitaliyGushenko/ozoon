@@ -1,0 +1,52 @@
+<section class="auth">
+  <div class="auth-card">
+    <h1>{{ mode() === 'login' ? 'Вход' : 'Регистрация' }}</h1>
+
+    <form (ngSubmit)="submit()">
+      <label>
+        Email
+        <input
+          type="email"
+          name="email"
+          [(ngModel)]="email"
+          required
+          autocomplete="email"
+        />
+      </label>
+
+      <label>
+        Пароль
+        <input
+          type="password"
+          name="password"
+          [(ngModel)]="password"
+          required
+          [minlength]="6"
+          [autocomplete]="mode() === 'login' ? 'current-password' : 'new-password'"
+        />
+      </label>
+
+      @if (error) {
+        <p class="error">{{ error }}</p>
+      }
+
+      <button type="submit" [disabled]="busy">
+        {{ busy ? 'Подождите…' : mode() === 'login' ? 'Войти' : 'Зарегистрироваться' }}
+      </button>
+    </form>
+
+    <p class="switch">
+      @if (mode() === 'login') {
+        Нет аккаунта?
+        <button type="button" class="link" (click)="switchMode('register')">
+          Зарегистрируйтесь
+        </button>
+      } @else {
+        Уже есть аккаунт?
+        <button type="button" class="link" (click)="switchMode('login')">
+          Войдите
+        </button>
+      }
+    </p>
+  </div>
+</section>

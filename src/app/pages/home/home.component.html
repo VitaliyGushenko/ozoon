@@ -1,0 +1,21 @@
+<main class="home">
+  <h1>Товары</h1>
+
+  @if (products().length === 0) {
+    <p class="empty">Товаров пока нет. Загляните позже!</p>
+  } @else {
+    <div class="grid">
+      @for (product of products(); track product.id) {
+        <article class="card">
+          <div class="card-image">
+            <img [src]="product.imageUrl" [alt]="product.title" loading="lazy" />
+          </div>
+          <div class="card-body">
+            <h2>{{ product.title }}</h2>
+            <p>{{ product.description }}</p>
+          </div>
+        </article>
+      }
+    </div>
+  }
+</main>

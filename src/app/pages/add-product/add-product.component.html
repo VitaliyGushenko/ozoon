@@ -1,0 +1,50 @@
+<section class="add-product">
+  <form class="form-card" (ngSubmit)="submit()">
+    <h1>Новый товар</h1>
+
+    <label>
+      Название
+      <input
+        type="text"
+        name="title"
+        [(ngModel)]="title"
+        required
+        maxlength="100"
+      />
+    </label>
+
+    <label>
+      Описание
+      <textarea
+        name="description"
+        [(ngModel)]="description"
+        rows="4"
+        required
+        maxlength="1000"
+      ></textarea>
+    </label>
+
+    <label>
+      Ссылка на изображение
+      <input
+        type="url"
+        name="imageUrl"
+        [(ngModel)]="imageUrl"
+        required
+        placeholder="https://example.com/photo.jpg"
+      />
+    </label>
+
+    @if (imageUrl) {
+      <img class="preview" [src]="imageUrl" alt="Предпросмотр" />
+    }
+
+    @if (error) {
+      <p class="error">{{ error }}</p>
+    }
+
+    <button type="submit" [disabled]="busy || !title || !description || !imageUrl">
+      {{ busy ? 'Публикуем…' : 'Опубликовать' }}
+    </button>
+  </form>
+</section>
