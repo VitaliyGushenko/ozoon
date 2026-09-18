@@ -11,6 +11,7 @@ import {
 import {
   doc,
   docData,
+  getDoc,
   Firestore,
   serverTimestamp,
   setDoc,
@@ -43,6 +44,7 @@ export class AuthService {
         this.isSeller.set(false);
         this.profileSub?.unsubscribe();
         if (user) {
+          this.ensureProfileDoc(user.uid, user.email ?? '');
           this.profileSub = docData(this.profileDoc(user.uid)).subscribe(
             (data) => {
               const profile = data as UserProfile | undefined;
@@ -79,6 +81,23 @@ export class AuthService {
 
   async logout(): Promise<void> {
     await signOut(this.auth);
+  }
+
+  /** Пересоздаёт документ профиля, если регистрация оборвалась до его записи. */
+  private async ensureProfileDoc(uid: string, email: string): Promise<void> {
+    try {
+      const ref = this.profileDoc(uid);
+      const snap = await getDoc(ref);
+      if (!snap.exists()) {
+        await setDoc(ref, {
+          email,
+          isSeller: false,
+          createdAt: serverTimestamp(),
+        });
+      }
+    } catch {
+      // Нет доступа к Firestore (правила ещё не опубликованы) — повторим при следующем входе.
+    }
   }
 
   async setSeller(isSeller: boolean): Promise<void> {
