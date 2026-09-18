@@ -1,0 +1,46 @@
+<section class="users">
+  <h1>Пользователи</h1>
+
+  @if (users().length === 0) {
+    <p class="empty">Пользователей пока нет.</p>
+  } @else {
+    <table class="users-table">
+      <thead>
+        <tr>
+          <th>Email</th>
+          <th>Роли</th>
+        </tr>
+      </thead>
+      <tbody>
+        @for (user of users(); track user.id) {
+          <tr>
+            <td class="email">
+              {{ user.email }}
+              @if (isAdmin() && user.email === 'vit@mail.ru') {
+                <span class="badge admin">Админ</span>
+              }
+            </td>
+            <td class="roles">
+              <label class="role">
+                <input
+                  type="checkbox"
+                  [checked]="hasRole(user, 'seller')"
+                  (change)="toggleRole(user.id, 'seller', $any($event.target).checked)"
+                />
+                Продавец
+              </label>
+              <label class="role">
+                <input
+                  type="checkbox"
+                  [checked]="hasRole(user, 'moderator')"
+                  (change)="toggleRole(user.id, 'moderator', $any($event.target).checked)"
+                />
+                Модератор
+              </label>
+            </td>
+          </tr>
+        }
+      </tbody>
+    </table>
+  }
+</section>

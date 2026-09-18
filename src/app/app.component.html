@@ -6,6 +6,9 @@
       @if (isSeller()) {
         <a routerLink="/add-product">Добавить товар</a>
       }
+      @if (isAdmin()) {
+        <a routerLink="/users">Пользователи</a>
+      }
       @if (user()) {
         <a routerLink="/profile">Профиль</a>
       } @else {

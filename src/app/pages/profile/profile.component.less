@@ -28,33 +28,30 @@
   text-align: center;
 }
 
-.seller-toggle {
+.roles {
   display: flex;
-  align-items: center;
-  gap: 10px;
-  font-size: 1rem;
-  cursor: pointer;
-
-  input {
-    width: 18px;
-    height: 18px;
-    cursor: pointer;
-  }
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 8px;
 }
 
-.add-link {
-  color: #3f51b5;
-  text-decoration: none;
+.badge {
+  padding: 4px 12px;
+  border-radius: 14px;
+  background: #f0f0f0;
+  color: #666;
+  font-size: 0.85rem;
   font-weight: 500;
 
-  &:hover {
-    text-decoration: underline;
+  &.active {
+    background: #e8eaf6;
+    color: #3f51b5;
   }
 }
 
 .logout {
-  align-self: flex-start;
-  padding: 10px 20px;
+  align-self: center;
+  padding: 10px 24px;
   border: 1px solid #c62828;
   border-radius: 6px;
   background: none;

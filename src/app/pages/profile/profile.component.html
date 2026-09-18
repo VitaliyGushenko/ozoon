@@ -4,19 +4,18 @@
 
     <p class="email">{{ user()?.email }}</p>
 
-    <label class="seller-toggle">
-      <input
-        type="checkbox"
-        name="isSeller"
-        [ngModel]="isSeller()"
-        (ngModelChange)="toggleSeller($event)"
-      />
-      Я продавец
-    </label>
-
-    @if (isSeller()) {
-      <a routerLink="/add-product" class="add-link">Добавить товар →</a>
-    }
+    <div class="roles">
+      <span class="badge">Покупатель</span>
+      @if (isAdmin()) {
+        <span class="badge active">Админ</span>
+      }
+      @if (isModerator()) {
+        <span class="badge active">Модератор</span>
+      }
+      @if (isSeller()) {
+        <span class="badge active">Продавец</span>
+      }
+    </div>
 
     <button type="button" class="logout" (click)="logout()">Выйти</button>
   </div>

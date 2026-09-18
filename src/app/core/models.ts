@@ -1,6 +1,13 @@
+export interface UserRoles {
+  seller?: boolean;
+  moderator?: boolean;
+}
+
 export interface UserProfile {
   email: string;
-  isSeller: boolean;
+  /** Легаси-флаг продавца; новые профили используют roles.seller. */
+  isSeller?: boolean;
+  roles?: UserRoles;
   createdAt: number;
 }
 

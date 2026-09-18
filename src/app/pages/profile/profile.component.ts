@@ -1,11 +1,10 @@
 import { Component, inject } from '@angular/core';
-import { FormsModule } from '@angular/forms';
-import { Router, RouterLink } from '@angular/router';
+import { Router } from '@angular/router';
 import { AuthService } from '../../core/auth.service';
 
 @Component({
   selector: 'app-profile',
-  imports: [FormsModule, RouterLink],
+  imports: [],
   templateUrl: './profile.component.html',
   styleUrl: './profile.component.less',
 })
@@ -14,12 +13,16 @@ export class ProfileComponent {
   private router = inject(Router);
 
   readonly user = this.authService.user;
-  readonly profile = this.authService.profile;
   readonly isSeller = this.authService.isSeller;
+  readonly isModerator = this.authService.isModerator;
+  readonly isAdmin = this.authService.isAdmin;
 
-  async toggleSeller(enabled: boolean): Promise<void> {
-    await this.authService.setSeller(enabled);
-  }
+  /** «Покупатель» — роль по умолчанию; показываем её, если других нет. */
+  readonly roleBadges = [
+    { label: 'Админ', active: this.isAdmin },
+    { label: 'Модератор', active: this.isModerator },
+    { label: 'Продавец', active: this.isSeller },
+  ];
 
   async logout(): Promise<void> {
     await this.authService.logout();

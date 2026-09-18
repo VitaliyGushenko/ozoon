@@ -1,4 +1,4 @@
-import { Injectable, inject, signal } from '@angular/core';
+import { Injectable, computed, inject, signal } from '@angular/core';
 import { Subscription } from 'rxjs';
 import {
   Auth,
@@ -15,8 +15,8 @@ import {
   Firestore,
   serverTimestamp,
   setDoc,
-  updateDoc,
 } from '@angular/fire/firestore';
+import { environment } from '../../environments/environment';
 import { UserProfile } from './models';
 
 @Injectable({ providedIn: 'root' })
@@ -30,7 +30,16 @@ export class AuthService {
 
   readonly user = signal<User | null>(null);
   readonly profile = signal<UserProfile | null>(null);
-  readonly isSeller = signal(false);
+
+  /** Роли пересекаются; покупатель — неявная роль любого пользователя. */
+  readonly isAdmin = computed(() => this.user()?.email === environment.adminEmail);
+  readonly isModerator = computed(() => this.profile()?.roles?.moderator === true);
+  readonly isSeller = computed(
+    () =>
+      this.profile()?.roles?.seller === true ||
+      // легаси: профили, созданные до появления ролей
+      this.profile()?.isSeller === true
+  );
 
   private profileSub?: Subscription;
   private readyPromise: Promise<void>;
@@ -43,7 +52,6 @@ export class AuthService {
         this.user.set(user);
         resolve();
         this.profile.set(null);
-        this.isSeller.set(false);
         this.profileSub?.unsubscribe();
         if (user) {
           this.profileReady = new Promise<void>(
@@ -52,9 +60,7 @@ export class AuthService {
           this.ensureProfileDoc(user.uid, user.email ?? '');
           this.profileSub = docData(this.profileDoc(user.uid)).subscribe(
             (data) => {
-              const profile = data as UserProfile | undefined;
-              this.profile.set(profile ?? null);
-              this.isSeller.set(profile?.isSeller ?? false);
+              this.profile.set((data as UserProfile) ?? null);
               this.profileReadyResolve?.();
             }
           );
@@ -109,11 +115,5 @@ export class AuthService {
     } catch {
       // Нет доступа к Firestore (правила ещё не опубликованы) — повторим при следующем входе.
     }
-  }
-
-  async setSeller(isSeller: boolean): Promise<void> {
-    const user = this.user();
-    if (!user) return;
-    await updateDoc(this.profileDoc(user.uid), { isSeller });
   }
 }

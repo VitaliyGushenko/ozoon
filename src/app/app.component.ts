@@ -13,4 +13,5 @@ export class AppComponent {
 
   readonly user = this.authService.user;
   readonly isSeller = this.authService.isSeller;
+  readonly isAdmin = this.authService.isAdmin;
 }

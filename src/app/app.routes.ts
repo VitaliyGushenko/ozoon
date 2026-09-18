@@ -1,11 +1,13 @@
 import { Routes } from '@angular/router';
 import { authGuard } from './core/auth.guard';
 import { sellerGuard } from './core/seller.guard';
+import { adminGuard } from './core/admin.guard';
 import { HomeComponent } from './pages/home/home.component';
 import { AuthComponent } from './pages/auth/auth.component';
 import { ProfileComponent } from './pages/profile/profile.component';
 import { AddProductComponent } from './pages/add-product/add-product.component';
 import { ProductDetailComponent } from './pages/product/product-detail.component';
+import { UsersComponent } from './pages/users/users.component';
 
 export const routes: Routes = [
   { path: '', component: HomeComponent, title: 'Ozoon — маркетплейс' },
@@ -32,6 +34,12 @@ export const routes: Routes = [
     component: AddProductComponent,
     canActivate: [sellerGuard],
     title: 'Редактирование товара',
+  },
+  {
+    path: 'users',
+    component: UsersComponent,
+    canActivate: [adminGuard],
+    title: 'Пользователи',
   },
   { path: '**', redirectTo: '' },
 ];

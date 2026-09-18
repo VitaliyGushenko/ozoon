@@ -3,16 +3,40 @@ rules_version = '2';
 service cloud.firestore {
   match /databases/{database}/documents {
 
-    // Профиль пользователя: читает и пишет только владелец
-    match /users/{uid} {
-      allow read, write: if request.auth != null && request.auth.uid == uid;
+    function isSignedIn() {
+      return request.auth != null;
     }
 
-    // Товары: читать может кто угодно, публиковать — только продавцы
+    function isOwnProfile(uid) {
+      return isSignedIn() && request.auth.uid == uid;
+    }
+
+    function isAdmin() {
+      return isSignedIn() && request.auth.token.email == 'vit@mail.ru';
+    }
+
+    function isSeller() {
+      let profile = get(/databases/$(database)/documents/users/$(request.auth.uid)).data;
+      return profile.roles.seller == true || profile.isSeller == true;
+    }
+
+    // Профили: свой — читать и обновлять; админ — читать и обновлять любые.
+    // Владелец не может менять себе роли (roles, isSeller) — только админ.
+    match /users/{uid} {
+      allow read: if isOwnProfile(uid) || isAdmin();
+      allow create: if isOwnProfile(uid);
+      allow update: if isAdmin()
+        || (isOwnProfile(uid)
+            && !request.resource.data.diff(resource.data).affectedKeys()
+                  .hasAny(['roles', 'isSeller']));
+      allow delete: if false;
+    }
+
+    // Товары: читать может кто угодно, публиковать — только продавцы,
+    // изменять и удалять — только владелец товара.
     match /products/{productId} {
       allow read: if true;
-      allow create: if request.auth != null
-        && get(/databases/$(database)/documents/users/$(request.auth.uid)).data.isSeller == true
+      allow create: if isSignedIn() && isSeller()
         && request.resource.data.title is string
         && request.resource.data.title.size() > 0
         && request.resource.data.title.size() <= 100
@@ -29,7 +53,7 @@ service cloud.firestore {
         && request.resource.data.category in ['phone', 'laptop']
         && request.resource.data.specs is map
         && request.resource.data.sellerUid == request.auth.uid;
-      allow update, delete: if request.auth != null
+      allow update, delete: if isSignedIn()
         && resource.data.sellerUid == request.auth.uid;
     }
   }
