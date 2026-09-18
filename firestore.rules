@@ -15,21 +15,38 @@ service cloud.firestore {
       return isSignedIn() && request.auth.token.email == 'vit@mail.ru';
     }
 
+    function isModerator() {
+      return isAdmin()
+        || get(/databases/$(database)/documents/users/$(request.auth.uid)).data.roles.moderator == true;
+    }
+
     function isSeller() {
       let profile = get(/databases/$(database)/documents/users/$(request.auth.uid)).data;
       return profile.roles.seller == true || profile.isSeller == true;
     }
 
-    // Профили: свой — читать и обновлять; админ — читать и обновлять любые.
-    // Владелец не может менять себе роли (roles, isSeller) — только админ.
+    // Профили: свой — читать и обновлять; админ — читать и обновлять любые;
+    // модератор — менять только поле roles. Владелец не может менять себе роли.
     match /users/{uid} {
-      allow read: if isOwnProfile(uid) || isAdmin();
+      allow read: if isOwnProfile(uid) || isAdmin() || isModerator();
       allow create: if isOwnProfile(uid);
       allow update: if isAdmin()
+        || (isModerator()
+            && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['roles']))
         || (isOwnProfile(uid)
             && !request.resource.data.diff(resource.data).affectedKeys()
                   .hasAny(['roles', 'isSeller']));
       allow delete: if false;
+    }
+
+    // Заявки на роль продавца: id документа = uid заявителя.
+    // Создаёт и удаляет владелец; читать и удалять (рассматривать) — модераторы.
+    match /applications/{uid} {
+      allow read: if isOwnProfile(uid) || isModerator();
+      allow create: if isOwnProfile(uid)
+        && request.resource.data.email == request.auth.token.email;
+      allow update: if false;
+      allow delete: if isOwnProfile(uid) || isModerator();
     }
 
     // Товары: читать может кто угодно, публиковать — только продавцы,

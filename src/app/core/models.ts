@@ -27,6 +27,12 @@ export interface Product {
   createdAt: number;
 }
 
+/** Заявка на роль продавца; id документа = uid пользователя. */
+export interface SellerApplication {
+  email: string;
+  createdAt: unknown; // Firestore Timestamp
+}
+
 /** Данные товара, заполняемые продавцом в форме. */
 export type ProductDraft = Pick<
   Product,
