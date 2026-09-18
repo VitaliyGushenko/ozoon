@@ -16,6 +16,16 @@
         <h1>{{ product()!.title }}</h1>
         <p class="description">{{ product()!.description }}</p>
 
+        @if (isOwner()) {
+          <div class="owner-actions">
+            <a
+              class="edit-btn"
+              [routerLink]="['/product', product()!.id, 'edit']"
+            >Редактировать</a>
+            <button type="button" class="delete-btn" (click)="delete()">Удалить</button>
+          </div>
+        }
+
         <h2>Характеристики</h2>
         <table class="specs">
           @for (row of specRows(); track row.def.key) {

@@ -27,5 +27,11 @@ export const routes: Routes = [
     component: ProductDetailComponent,
     title: 'Товар',
   },
+  {
+    path: 'product/:id/edit',
+    component: AddProductComponent,
+    canActivate: [sellerGuard],
+    title: 'Редактирование товара',
+  },
   { path: '**', redirectTo: '' },
 ];

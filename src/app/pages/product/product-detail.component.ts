@@ -1,11 +1,13 @@
 import { Component, computed, inject, signal } from '@angular/core';
-import { ActivatedRoute, RouterLink } from '@angular/router';
+import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { toSignal } from '@angular/core/rxjs-interop';
 import {
   doc,
   docSnapshots,
   Firestore,
 } from '@angular/fire/firestore';
+import { AuthService } from '../../core/auth.service';
+import { ProductsService } from '../../core/products.service';
 import { Product } from '../../core/models';
 import { CATEGORIES, SPEC_TEMPLATES, SpecDef } from '../../core/specs';
 
@@ -18,6 +20,9 @@ import { CATEGORIES, SPEC_TEMPLATES, SpecDef } from '../../core/specs';
 export class ProductDetailComponent {
   private firestore = inject(Firestore);
   private route = inject(ActivatedRoute);
+  private router = inject(Router);
+  private authService = inject(AuthService);
+  private productsService = inject(ProductsService);
 
   private productId = signal<string>(this.route.snapshot.paramMap.get('id') ?? '');
 
@@ -30,6 +35,13 @@ export class ProductDetailComponent {
     const snap = this.snapshot();
     if (!snap || !snap.exists()) return null;
     return { id: snap.id, ...(snap.data() as Omit<Product, 'id'>) };
+  });
+
+  /** Кнопки редактирования и удаления видит только владелец товара. */
+  readonly isOwner = computed(() => {
+    const product = this.product();
+    const user = this.authService.user();
+    return !!product && !!user && product.sellerUid === user.uid;
   });
 
   readonly categoryLabel = computed(() => {
@@ -46,4 +58,12 @@ export class ProductDetailComponent {
       value: product.specs[def.key] ?? '—',
     }));
   });
+
+  async delete(): Promise<void> {
+    const product = this.product();
+    if (!product?.id) return;
+    if (!confirm('Удалить товар «' + product.title + '»?')) return;
+    await this.productsService.deleteProduct(product.id);
+    await this.router.navigate(['/']);
+  }
 }

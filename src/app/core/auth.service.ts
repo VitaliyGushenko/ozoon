@@ -34,6 +34,8 @@ export class AuthService {
 
   private profileSub?: Subscription;
   private readyPromise: Promise<void>;
+  private profileReady?: Promise<void>;
+  private profileReadyResolve?: () => void;
 
   constructor() {
     this.readyPromise = new Promise((resolve) => {
@@ -44,22 +46,31 @@ export class AuthService {
         this.isSeller.set(false);
         this.profileSub?.unsubscribe();
         if (user) {
+          this.profileReady = new Promise<void>(
+            (resolveProfile) => (this.profileReadyResolve = resolveProfile)
+          );
           this.ensureProfileDoc(user.uid, user.email ?? '');
           this.profileSub = docData(this.profileDoc(user.uid)).subscribe(
             (data) => {
               const profile = data as UserProfile | undefined;
               this.profile.set(profile ?? null);
               this.isSeller.set(profile?.isSeller ?? false);
+              this.profileReadyResolve?.();
             }
           );
+        } else {
+          this.profileReady = Promise.resolve();
         }
       });
     });
   }
 
-  /** Гарантирует, что Firebase уже сообщил о состоянии входа. */
+  /**
+   * Гарантирует, что Firebase сообщил о состоянии входа и профиль
+   * (если пользователь вошёл) загружен из Firestore — важно для guard'ов.
+   */
   ensureReady(): Promise<void> {
-    return this.readyPromise;
+    return this.readyPromise.then(() => this.profileReady);
   }
 
   async register(email: string, password: string): Promise<void> {

@@ -3,10 +3,13 @@ import {
   addDoc,
   collection,
   collectionData,
+  deleteDoc,
+  doc,
   Firestore,
   orderBy,
   query,
   serverTimestamp,
+  updateDoc,
 } from '@angular/fire/firestore';
 import { Observable } from 'rxjs';
 import { AuthService } from './auth.service';
@@ -36,5 +39,16 @@ export class ProductsService {
       sellerUid: user.uid,
       createdAt: serverTimestamp(),
     });
+  }
+
+  updateProduct(
+    id: string,
+    changes: Pick<Product, 'title' | 'description' | 'imageUrl' | 'category' | 'specs'>
+  ) {
+    return updateDoc(doc(this.firestore, 'products', id), changes);
+  }
+
+  deleteProduct(id: string) {
+    return deleteDoc(doc(this.firestore, 'products', id));
   }
 }

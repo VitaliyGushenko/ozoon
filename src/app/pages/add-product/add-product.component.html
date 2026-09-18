@@ -1,6 +1,6 @@
 <section class="add-product">
   <form class="form-card" (ngSubmit)="submit()">
-    <h1>Новый товар</h1>
+    <h1>{{ editMode() ? 'Редактирование товара' : 'Новый товар' }}</h1>
 
     <label>
       Категория
@@ -111,7 +111,7 @@
         !specsComplete()
       "
     >
-      {{ busy ? 'Публикуем…' : 'Опубликовать' }}
+      {{ busy ? 'Сохраняем…' : editMode() ? 'Сохранить изменения' : 'Опубликовать' }}
     </button>
   </form>
 </section>
