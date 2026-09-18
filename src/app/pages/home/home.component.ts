@@ -15,4 +15,15 @@ export class HomeComponent {
   readonly products = toSignal(this.productsService.products$, {
     initialValue: [],
   });
+
+  /** Если ссылка на картинку битая — показываем заглушку по категории. */
+  onImgError(event: Event, category?: string): void {
+    const img = event.target as HTMLImageElement;
+    if (img.dataset['fallback']) return;
+    img.dataset['fallback'] = '1';
+    img.src =
+      category === 'laptop'
+        ? 'images/placeholder-laptop.svg'
+        : 'images/placeholder-phone.svg';
+  }
 }

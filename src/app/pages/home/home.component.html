@@ -13,6 +13,7 @@
                 [src]="product.images?.[0] ?? product.imageUrl"
                 [alt]="product.title"
                 loading="lazy"
+                (error)="onImgError($event, product.category)"
               />
             </div>
             <div class="card-body">

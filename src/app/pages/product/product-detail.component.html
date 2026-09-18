@@ -9,7 +9,11 @@
     <div class="layout">
       <div class="image-side">
         <div class="carousel">
-          <img [src]="images()[currentImage()]" [alt]="product()!.title" />
+          <img
+            [src]="images()[currentImage()]"
+            [alt]="product()!.title"
+            (error)="onImgError($event)"
+          />
 
           @if (images().length > 1) {
             <button

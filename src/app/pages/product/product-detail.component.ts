@@ -78,6 +78,17 @@ export class ProductDetailComponent {
     this.currentImage.set(index);
   }
 
+  /** Если ссылка на картинку битая — показываем заглушку по категории. */
+  onImgError(event: Event): void {
+    const img = event.target as HTMLImageElement;
+    if (img.dataset['fallback']) return;
+    img.dataset['fallback'] = '1';
+    img.src =
+      this.product()?.category === 'laptop'
+        ? 'images/placeholder-laptop.svg'
+        : 'images/placeholder-phone.svg';
+  }
+
   // --- Характеристики, выбираемые покупателем ---
 
   readonly variantEntries = computed<{ key: string; def: SpecDef; values: string[] }[]>(
