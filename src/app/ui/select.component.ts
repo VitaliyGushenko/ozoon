@@ -3,6 +3,7 @@ import {
   ControlValueAccessor,
   NG_VALUE_ACCESSOR,
 } from '@angular/forms';
+import { FormsModule } from '@angular/forms';
 import { FIELD_STYLES } from './input.component';
 import { UiFieldBase } from './field-base';
 
@@ -16,10 +17,14 @@ export interface SelectOption {
  * Выпадающий список:
  * <ui-select label="Категория" [options]="categoryOptions" [(ngModel)]="category">
  * </ui-select>
+ *
+ * Внутренний select работает через ngModel (SelectControlValueAccessor),
+ * чтобы значение корректно применялось к опциям в любом порядке рендера.
  */
 @Component({
   selector: 'ui-select',
   standalone: true,
+  imports: [FormsModule],
   template: `
     <span class="ui-field">
       @if (label) {
@@ -28,8 +33,9 @@ export interface SelectOption {
       <select
         class="ui-field__control"
         [disabled]="disabled"
-        [value]="value ?? ''"
-        (change)="handleChange($event)"
+        [ngModel]="value ?? ''"
+        (ngModelChange)="handleChange($event)"
+        [ngModelOptions]="{ standalone: true }"
         (blur)="onTouched?.()"
       >
         @if (placeholder) {
@@ -59,7 +65,7 @@ export class UiSelect extends UiFieldBase implements ControlValueAccessor {
   /** Доступные варианты; value — то, что попадает в модель. */
   @Input() options: SelectOption[] = [];
 
-  handleChange(event: Event): void {
-    this.emit((event.target as HTMLSelectElement).value);
+  handleChange(value: unknown): void {
+    this.emit(value);
   }
 }
