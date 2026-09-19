@@ -112,7 +112,7 @@
                 </div>
               }
 
-              @if (spec.type === 'select') {
+              @if (spec.key === 'ram' || spec.key === 'storage') {
                 <ui-checkbox
                   label="Покупатель выбирает при покупке"
                   class="variant-toggle"
